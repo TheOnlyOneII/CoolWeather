@@ -103,7 +103,7 @@ public class WeatherActivity extends AppCompatActivity {
         if(bingPic != null){
             Glide.with(this).load(bingPic).into(bingPicImg);
         }else{
-            loadBingPic();
+            loadBingPic();  //下次打代码要小心
         }
     }
 

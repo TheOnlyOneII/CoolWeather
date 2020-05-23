@@ -29,7 +29,7 @@ import okhttp3.Response;
 public class AutoUpdateService extends Service {
     public AutoUpdateService() {
     }
-
+    // tijiaoceshi
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.

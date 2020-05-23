@@ -110,18 +110,7 @@ public class ChooseAreaFragment extends Fragment {
                 }
             }
         });
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (currentLevel == LEVEL_PROVINCE) {
-                    selectedProvince = provinceList.get(position);
-                    queryCities();
-                } else if (currentLevel == LEVEL_CITY) {
-                    selectedCity = cityList.get(position);
-                    queryCounties();
-                }
-            }
-        });*/
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +122,41 @@ public class ChooseAreaFragment extends Fragment {
             }
         });
         queryProvinces();   // 加载省级数据
+
+        // 设置 ListView 和 Button 的点击事件
+        /**
+         * 这里使用了一个 Java 中的小技巧，用 instanceof 关键字来判断一个对象是否属于某个类的实例。
+         * 在碎片中调用getActivity()方法，然后配合 instanceof 关键字
+         * 判断该碎片是在 WeatherActivity 还是 MainActivity 中
+         * 如果在 WeatherActivity 中就关闭滑动菜单，显示下拉刷新条，然后请求新城市的天气信息。
+         */
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (currentLevel == LEVEL_PROVINCE){
+                    selectedProvince = provinceList.get(position);
+                    queryCities();
+                }else if (currentLevel == LEVEL_CITY){
+                    selectedCity = cityList.get(position);
+                    queryCounties();
+                }else if (currentLevel == LEVEL_COUNTY){
+                    String weatherId = countyList.get(position).getWeatherId();
+                    if(getActivity()instanceof WeatherActivity){//判断碎片位置
+                        //该碎片在WeatherActivity中，只需要刷新活动
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+
+                    }else if (getActivity() instanceof MainActivity){
+                        Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);    // 向intent传入WeatherId
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                }
+            }
+        });
     }
 
 
